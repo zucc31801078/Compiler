@@ -1,45 +1,47 @@
+(* File MicroC/Absyn.fs
+   Abstract syntax of micro-C, an imperative language.
+   sestoft@itu.dk 2009-09-25
+
+   Must precede Interp.fs, Comp.fs and Contcomp.fs in Solution Explorer
+ *)
+
 module Absyn
 
 // 基本类型
+// 注意，数组、指针是递归类型
+// 这里没有函数类型，注意与上次课的 MicroML 对比
 type typ =
-    | TypI                             (* Type int                    *)
-    | TypC                             (* Type char                   *)
-    | TypB
-    | TypF
-//    | TypS
-    | TypA of typ * int option         (* Array type                  *)
-    | TypP of typ                      (* Pointer type                *)
+  | TypI                             (* Type int                    *)
+  | TypC                             (* Type char                   *)
+  | TypS
+  | TypA of typ * int option         (* Array type                  *)
+  | TypP of typ                      (* Pointer type                *)
                                                                    
 and expr =                           // 表达式，右值                                                
-    | Access of access                 (* x    or  *p    or  a[e]     *) //访问左值（右值）
-    | Assign of access * expr          (* x=e  or  *p=e  or  a[e]=e   *)
-    | Addr of access                   (* &x   or  &*p   or  &a[e]    *)
-    | CstI of int                      (* Constant                    *)
-    | CstC of char
-    | CstB of bool
-    | CstF of float32
-//    | CstS of string
-    | UPrim of string * expr           (* Unary primitive operator    *)
-    | BPrim of string * expr * expr    (* Binary primitive operator   *)
-    | Andalso of expr * expr           (* Sequential and              *)
-    | Orelse of expr * expr            (* Sequential or               *)
-    | Call of string * expr list       (* Function call f(...)        *)
+  | Access of access                 (* x    or  *p    or  a[e]     *) //访问左值（右值）
+  | Assign of access * expr          (* x=e  or  *p=e  or  a[e]=e   *)
+  | Addr of access                   (* &x   or  &*p   or  &a[e]    *)
+  | CstI of int                      (* Constant                    *)
+  | CstC of char
+  | CstS of string
+  | UPrim of string * expr           (* Unary primitive operator    *)
+  | BPrim of string * expr * expr    (* Binary primitive operator   *)
+  | Print of string * expr
+  | Andalso of expr * expr           (* Sequential and              *)
+  | Orelse of expr * expr            (* Sequential or               *)
+  | Call of string * expr list       (* Function call f(...)        *)
                                                                    
 and access =                         //左值，存储的位置                                            
-    | AccVar of string                 (* Variable access        x    *) 
-    | AccDeref of expr                 (* Pointer dereferencing  *p   *)
-    | AccIndex of access * expr        (* Array indexing         a[e] *)
+  | AccVar of string                 (* Variable access        x    *) 
+  | AccDeref of expr                 (* Pointer dereferencing  *p   *)
+  | AccIndex of access * expr        (* Array indexing         a[e] *)
                                                                    
 and stmt =                                                         
-    | If of expr * stmt * stmt         (* Conditional                 *)
-    | While of expr * stmt             (* While loop                  *)
-    | Expr of expr                     (* Expression statement   e;   *)
-    | Return of expr option            (* Return from method          *)
-    | DoWhile of stmt * expr
-    | For of string * expr * expr * stmt
-    | Print of expr
-    | Asgn of string * expr
-    | Block of stmtordec list          (* Block: grouping and scope   *)
+  | If of expr * stmt * stmt         (* Conditional                 *)
+  | While of expr * stmt             (* While loop                  *)
+  | Expr of expr                     (* Expression statement   e;   *)
+  | Return of expr option            (* Return from method          *)
+  | Block of stmtordec list          (* Block: grouping and scope   *)
   // 语句块内部，可以是变量声明 或语句的列表                                                              
 
 and stmtordec =                                                    
